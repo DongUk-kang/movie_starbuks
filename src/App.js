@@ -2,6 +2,8 @@ import React, {useEffect, useState} from 'react';
 import {Card, Button} from 'react-bootstrap';
 import axios from "axios";
 import styled from 'styled-components';
+import UpcommingCardView from "./UpcommingCardView";
+import TrendCardView from "./TrendCardView";
 
 
 const Container = styled.div`
@@ -30,7 +32,9 @@ const App = () => {
 
   const [videos, setVideos] = useState([])
     const [movies, setMovies] = useState([])
+    const [tvs, setTvs] = useState([])
   const [loading, setLoading] = useState(true)
+
 
   const getData = async () => {
     return (
@@ -57,15 +61,26 @@ const getDates = async () => {
       )
 }
 
+const getTvdb = async () => {
+      return (
+          await axios.get('https://api.themoviedb.org/3/tv/on_the_air?api_key=8597e491ed6e80f0de12e349eb60ea6e&language=en-US&page=1')
+              // .then(sss => console.log(sss.data.results))
+              .then(sss => {
+                  setTvs(sss.data.results)
+                  setLoading(false)
+              })
+              .catch(err => console.log(err))
+      )
+}
+
 
 
   useEffect(() => {
     getData()
+     getDates()
+     getTvdb()
   }, [])
 
-  useEffect(() => {
-      getDates()
-  },[])
 
 
     return (
@@ -84,19 +99,16 @@ const getDates = async () => {
                             <Grid>
                                 {videos.map(video =>
                                     <>
+                                        <TrendCardView
+                                            name={video.original_name ? video.original_name : video.original_title}
+                                            overview={video.overview}
+                                            poster={video.poster_path}
+                                        />
+
                                         {/*<h1>Title : {video.original_name ? video.original_name : video.original_title}</h1>*/}
                                         {/*<h2>{video.first_air_date ? video.first_air_date : video.release_date}</h2>*/}
                                         {/*/!*<h2>Fisrt Releas Dat : {video.first_air_date || video.release_date}</h2>*!/*/}
-                                        <Card style={{ width: '18rem' }}>
-                                            <Card.Img variant="top" src={`https://image.tmdb.org/t/p/w500${video.poster_path}`} />
-                                            <Card.Body>
-                                                <Card.Title>{video.original_name ? video.original_name : video.original_title}</Card.Title>
-                                                <Card.Text>
-                                                    {video.overview.substring(0, 180)}...
-                                                </Card.Text>
-                                                <Button variant="success">Success</Button>
-                                            </Card.Body>
-                                        </Card>
+
                                     </>
                                 )}
                             </Grid>
@@ -106,17 +118,26 @@ const getDates = async () => {
                             <Grid>
                                 {movies.map(movie =>
                                     <>
-                                        <Card style={{ width: '18rem' }}>
-                                            <Card.Body>
-                                                <Card.Title>{movie.title}</Card.Title>
-                                                <Card.Subtitle className="mb-2 text-muted">{movie.release_date}</Card.Subtitle>
-                                                <Card.Text>
-                                                    {movie.overview.substring(0, 120)}...
-                                                </Card.Text>
-                                                <Card.Link href="#">Card Link</Card.Link>
-                                                <Card.Link href="#">Another Link</Card.Link>
-                                            </Card.Body>
-                                        </Card>
+                                       <UpcommingCardView
+                                           title={movie.title}
+                                           overview={movie.overview.substring(0, 120)}
+                                           date={movie.release_date}
+                                       />
+                                    </>
+                                )}
+                            </Grid>
+                        </div>
+                        <div>
+                            <Title>현재 방영</Title>
+                            <Grid>
+                                {tvs.map(tv =>
+                                    <>
+                                        <TrendCardView
+                                            title={tv.name}
+                                            overview={tv.overview}
+                                            poster={tv.poster_path}
+
+                                        />
                                     </>
                                 )}
                             </Grid>
