@@ -1,4 +1,5 @@
 import React, {useEffect, useState} from 'react';
+import {Card, Button} from 'react-bootstrap';
 import axios from "axios";
 
 const App = () => {
@@ -37,8 +38,21 @@ const App = () => {
                     <div>
                         {videos.map(video =>
                             <>
-                                <h1>Title : {video.original_name || video.original_title}</h1>
-                                <h2>Fisrt Releas Dat : {video.first_air_date || video.release_date}</h2>
+                                {/*<h1>Title : {video.original_name ? video.original_name : video.original_title}</h1>*/}
+                                {/*<h2>{video.first_air_date ? video.first_air_date : video.release_date}</h2>*/}
+                                {/*/!*<h2>Fisrt Releas Dat : {video.first_air_date || video.release_date}</h2>*!/*/}
+                                <Card style={{ width: '18rem' }}>
+                                    <Card.Img variant="top" src={`https://image.tmdb.org/t/p/w500${video.poster_path}`} />
+                                    <Card.Body>
+                                        <Card.Title>{video.original_name ? video.original_name : video.original_title}</Card.Title>
+                                        <Card.Text>
+                                            {video.overview}
+                                        </Card.Text>
+                                        <Button variant="primary">Go detail</Button>
+                                    </Card.Body>
+                                </Card>
+
+
                             </>
                         )}
 
